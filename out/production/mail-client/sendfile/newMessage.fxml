@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="746.0" prefWidth="650.0" style="-fx-background-color: #232744;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sendfile.newMessageController">
+   <children>
+      <Label layoutX="86.0" layoutY="20.0" text="To" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Bold" size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="to" blendMode="SCREEN" layoutX="86.0" layoutY="45.0" prefHeight="33.0" prefWidth="478.0" promptText="example@mail.com" style="-fx-background-color: #202020;">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="cc" blendMode="SCREEN" layoutX="86.0" layoutY="113.0" prefHeight="33.0" prefWidth="478.0" style="-fx-background-color: #202020;">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="bcc" blendMode="SCREEN" layoutX="86.0" layoutY="179.0" prefHeight="33.0" prefWidth="478.0" style="-fx-background-color: #202020;">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <Label layoutX="86.0" layoutY="225.0" text="Subject" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Bold" size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="subject" blendMode="SCREEN" layoutX="86.0" layoutY="250.0" prefHeight="33.0" prefWidth="478.0" style="-fx-background-color: #202020;">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <Label layoutX="82.0" layoutY="361.0" text="Message" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Bold" size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="message" blendMode="SCREEN" layoutX="18.0" layoutY="385.0" prefHeight="279.0" prefWidth="614.0" style="-fx-background-color: #202020;">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextField>
+      <Button fx:id="btn_send" layoutX="274.0" layoutY="687.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="112.0" style="-fx-background-color: #f0634f;" text="Send" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Regular" size="15.0" />
+         </font></Button>
+      <Label layoutX="85.0" layoutY="90.0" text="CC" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="86.0" layoutY="158.0" text="BCC" textFill="WHITE">
+         <font>
+            <Font name="SansSerif Regular" size="15.0" />
+         </font>
+      </Label>
+      <Button layoutX="84.0" layoutY="303.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="22.0" style="-fx-background-color: transparent;">
+         <graphic>
+            <ImageView fitHeight="30.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../img/attachments.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>
