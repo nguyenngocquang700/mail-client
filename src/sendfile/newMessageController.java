@@ -1,31 +1,30 @@
 package sendfile;
 
+import sendfile.newMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javax.mail.*;
 import javax.mail.internet.*;
+import javax.swing.text.html.ImageView;
+import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
-public class newMessageController extends Application{
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class newMessageController{
     @FXML
-    private TextField to;
+    private TextField to; 
     public TextField cc;
-    public TextField bcc;
+    public  TextField bcc;
     public TextField subject;
     public TextField message;
+    public Button btn_attachments;
     public Button btn_send;
+    public ImageView img_attach;
 
-    public void start(Stage stage) throws Exception{
-//        FXMLLoader loader = new FXMLLoader();
+    public void sendMail(ActionEvent event){
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.host", MailConfig.HostSend);
@@ -39,6 +38,8 @@ public class newMessageController extends Application{
                 return new PasswordAuthentication(MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             }
         });
+
+        final FileChooser fileChooser = new FileChooser();
 
         try {
             MimeMessage messagePacket = new MimeMessage(session);
@@ -56,26 +57,24 @@ public class newMessageController extends Application{
             multipart.addBodyPart(messageBodyPart);
 
             messagePacket.setContent(multipart);
-            btn_send.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    try {
-                        Transport.send(messagePacket);
-                        System.out.println("Message sent successfully");
-                    } catch (MessagingException e) {
-                        System.out.println("Cannot send mail");
-                        e.printStackTrace();
-                    }
+
+//            btn_attachments.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    List<File> files = fileChooser.showOpenMultipleDialog(primaryStage)
+//                }
+//            });
+            btn_send.setOnAction(actionEvent -> {
+                try {
+                    Transport.send(messagePacket);
+                    System.out.println("Message sent successfully");
+                } catch (MessagingException e) {
+                    System.out.println("Cannot send mail");
+                    e.printStackTrace();
                 }
             });
-
-            stage.setTitle("New Mail");
-            stage.show();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
     }
-
-
 }
