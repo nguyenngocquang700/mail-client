@@ -13,7 +13,8 @@ public class newMessage extends Application {
         try {
             Parent root = FXMLLoader.load(this.getClass().getResource("newMessage.fxml"));
             Scene scene = new Scene(root);
-                primaryStage.setScene(scene);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Send Mail");
             primaryStage.show();
         } catch (Exception e){
             System.out.println(e.getMessage());

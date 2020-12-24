@@ -15,7 +15,7 @@ import java.util.Properties;
 
 public class newMessageController{
     @FXML
-    private TextField to; 
+    private TextField to;
     public TextField cc;
     public  TextField bcc;
     public TextField subject;

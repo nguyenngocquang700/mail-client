@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="746.0" prefWidth="650.0" style="-fx-background-color: #232744;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sendfile.newMessage">
+<AnchorPane prefHeight="746.0" prefWidth="650.0" style="-fx-background-color: #232744;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sendfile.newMessageController">
    <children>
       <Label layoutX="86.0" layoutY="20.0" text="To" textFill="WHITE">
          <font>
             <Font name="SansSerif Bold" size="15.0" />
          </font>
       </Label>
-      <TextField fx:id="to" blendMode="SCREEN" layoutX="86.0" layoutY="45.0" prefHeight="33.0" prefWidth="478.0" promptText="example@mail.com" style="-fx-background-color: #202020;">
+      <TextField fx:id="to" blendMode="SCREEN" layoutX="86.0" layoutY="45.0" onAction="#sendMail" prefHeight="33.0" prefWidth="478.0" promptText="example@mail.com" style="-fx-background-color: #202020; -fx-text-inner-color: #000000;">
          <font>
             <Font size="13.0" />
          </font>
@@ -69,11 +69,11 @@
             <Font size="14.0" />
          </font>
          <graphic>
-            <ImageView fx:id="img_attach" fitHeight="58.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/attachments.png" />
-               </image>
-            </ImageView>
+<!--            <ImageView fx:id="img_attach" fitHeight="58.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">-->
+<!--               <image>-->
+<!--                  <Image url="@../../img/attachments.png" />-->
+<!--               </image>-->
+<!--            </ImageView>-->
          </graphic>
       </Button>
    </children>
