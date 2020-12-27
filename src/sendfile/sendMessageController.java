@@ -36,7 +36,7 @@ import java.util.List;
 
 public class sendMessageController {
     @FXML
-    private AnchorPane anchorPaneStage;
+    public AnchorPane anchorPaneStage;
     public TextField receiverText;
     public TextField ccText;
     public TextField bccText;
@@ -143,10 +143,7 @@ public class sendMessageController {
             }
         }
     }
-    public void changeFont(){
-        MenuItem font1=new MenuItem("Time new Roman");
-        MenuItem font2=new MenuItem("Calibri");
-    }
+
     public void chooseFile(){
         Stage stage=(Stage)anchorPaneStage.getScene().getWindow();
         FileChooser fc=new FileChooser();

@@ -3,7 +3,11 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -61,7 +65,7 @@
                      <children>
                         <Pane prefHeight="68.0" prefWidth="197.0" style="-fx-background-color: #00000;">
                            <children>
-                              <Button fx:id="btn_COMPOSE" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="68.0" prefWidth="198.0" style="-fx-background-color: #f0634f;" text="Compose" textFill="WHITE">
+                              <Button fx:id="composeButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#showComposeScreen" prefHeight="68.0" prefWidth="198.0" style="-fx-background-color: #f0634f;" text="Compose" textFill="WHITE">
                                  <font>
                                     <Font name="Roboto Medium" size="18.0" />
                                  </font>

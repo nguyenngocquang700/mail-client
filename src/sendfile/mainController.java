@@ -3,6 +3,7 @@ package sendfile;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -11,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
 import javax.mail.*;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;

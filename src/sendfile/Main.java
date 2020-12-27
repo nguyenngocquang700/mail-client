@@ -2,6 +2,7 @@ package sendfile;
 
 import com.jfoenix.controls.JFXHamburger;
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
