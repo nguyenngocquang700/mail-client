@@ -71,7 +71,7 @@ public class CheckingMails {
             Session session = Session.getDefaultInstance(properties, null);
             store = session.getStore("imaps");
             store.connect("imap.gmail.com", MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
-            folder = store.getFolder("Inbox");
+            folder = store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
             Message[] message = folder.getMessages();
             System.out.println("No of messages: " + folder.getMessageCount());
@@ -88,7 +88,7 @@ public class CheckingMails {
                 }
                 String subject = msg.getSubject();
                 System.out.println("Saving... " + subject + from);
-
+                System.out.println("Content " + msg.getContent().toString());
                 String filename = "E:\\temp" + subject;
 
             }
