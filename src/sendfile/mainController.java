@@ -3,16 +3,18 @@ package sendfile;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
 import javax.mail.*;
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
@@ -24,6 +26,9 @@ public class mainController implements Initializable {
     private ObservableList<FormatMessage> messageObservableList;
     @FXML
     private ListView<FormatMessage> listMessageViewParent;
+    @FXML
+    public Button composeButton;
+    public AnchorPane showCompose;
 
     public mainController() throws NoSuchProviderException {
         Folder folder = null;
@@ -62,6 +67,13 @@ public class mainController implements Initializable {
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
     }
+
+    public void showComposeScreen() throws IOException {
+        FXMLLoader fXMLLoader;
+        Parent root = FXMLLoader.load(this.getClass().getResource("sendMessage.fxml"));
+        showCompose.getChildren().add(root);
+    }
+
 
 //    public String dumpMessage(final Message message) throws IOException, MessagingException{
 //        final Object content = message.getContent();

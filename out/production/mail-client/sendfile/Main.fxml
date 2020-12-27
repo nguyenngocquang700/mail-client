@@ -61,7 +61,7 @@
                      <children>
                         <Pane prefHeight="68.0" prefWidth="197.0" style="-fx-background-color: #00000;">
                            <children>
-                              <Button fx:id="btn_COMPOSE" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="68.0" prefWidth="198.0" style="-fx-background-color: #f0634f;" text="Compose" textFill="WHITE">
+                              <Button fx:id="composeButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#showComposeScreen" prefHeight="68.0" prefWidth="198.0" style="-fx-background-color: #f0634f;" text="Compose" textFill="WHITE">
                                  <font>
                                     <Font name="Roboto Medium" size="18.0" />
                                  </font>
@@ -142,6 +142,7 @@
                <children>
                   <HBox prefHeight="100.0" prefWidth="200.0" />
                   <JFXListView fx:id="listMessageViewParent" GridPane.rowIndex="1" />
+                  <AnchorPane fx:id="showCompose" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </center>
