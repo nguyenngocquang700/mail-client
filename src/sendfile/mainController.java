@@ -15,8 +15,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
 import javax.mail.*;
+import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -24,16 +27,65 @@ import java.util.logging.Logger;
 
 public class mainController implements Initializable {
     private ObservableList<FormatMessage> messageObservableList;
+    Folder folder = null;
+    Store store = null;
     @FXML
     private ListView<FormatMessage> listMessageViewParent;
     @FXML
     public Button composeButton;
     public AnchorPane showCompose;
 
+//    private boolean textIsHtml = false;
+
+//    private String getText(Part p) throws MessagingException, IOException{
+//        if (p.isMimeType("text/*")) {
+//            String content = (String)p.getContent();
+//            textIsHtml = p.isMimeType("text/html");
+//            return content;
+//        }
+//
+//        if (p.isMimeType("multipart/alternative")){
+//            Multipart mp = (Multipart)p.getContent();
+//            String text = null;
+//            for (int i = 0; i < mp.getCount(); i++){
+//                Part bp = mp.getBodyPart(i);
+//                if (bp.isMimeType("text/plain")){
+//                    if (text == null){
+//                        text = getText(bp);
+//                    }
+//                    continue;
+//                } else if(bp.isMimeType("text/html")){
+//                    String s = getText(bp);
+//                    if (s != null){
+//                        return s;
+//                    }
+//                    else return getText(bp);
+//                }
+//            }
+//            return text;
+//        } else if (p.isMimeType("multipart/*")){
+//            Multipart mp = (Multipart)p.getContent();
+//            for (int i = 0; i < mp.getCount(); i++){
+//                String s = getText(mp.getBodyPart(i));
+//                if (s != null) return s;
+//            }
+//        }
+//        return null;
+//    }
+
+    Session createSession(String folderName) throws MessagingException {
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+
+        Session session = Session.getDefaultInstance(props, null);
+        store = session.getStore("imaps");
+        folder = store.getFolder(folderName);
+        folder.open(Folder.READ_ONLY);
+        return session;
+    }
+    
     public mainController() throws NoSuchProviderException {
-        Folder folder = null;
-        Store store = null;
-        try{
+        try {
             Properties props = new Properties();
             props.setProperty("mail.store.protocol", "imaps");
 
@@ -44,26 +96,26 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (int i = 0; i < messages.length; ++i){
+            for (int i = 0; i < messages.length; ++i) {
                 Message msg = messages[i];
                 String from = "Unknow";
-                if (msg.getReplyTo().length >= 1){
+                if (msg.getReplyTo().length >= 1) {
                     from = msg.getReplyTo()[0].toString();
-                }
-                else if (msg.getFrom().length >= 1){
+                } else if (msg.getFrom().length >= 1) {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
 //                String content = msg.getContent().toString();
-                messageObservableList.add(new FormatMessage(from,subject));
+                messageObservableList.add(new FormatMessage(from, subject));
             }
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
+
     @Override
-    public void initialize(URL url, ResourceBundle rb){
+    public void initialize(URL url, ResourceBundle rb) {
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
     }
@@ -79,9 +131,10 @@ public class mainController implements Initializable {
 //        final Object content = message.getContent();
 //        if(String.class.isInstance(content)){
 //            if (message.isMimeType("text/plain")) return (String)content;
-//            else if(message.isMimeType("text/html")) return GenericTools
+//            else if(message.isMimeType("text/html")) return GenericT
 //        }
-    }
+//    }
 
+}
 
 
