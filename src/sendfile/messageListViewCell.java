@@ -40,7 +40,6 @@ public class messageListViewCell extends ListCell<FormatMessage> {
             }
             fromLb.setText(String.valueOf(FormatMessage.getFrom()));
             subjectLb.setText(String.valueOf(FormatMessage.getSubject()));
-//            contentMailLb.setText(String.valueOf(FormatMessage.getContentMail()));
             setText(null);
             setGraphic(gridPane);
         }

@@ -137,8 +137,6 @@ public class sendMessageController {
                 imgAttach.setImage(image);
                 imgAttach.setFitWidth(43);
                 imgAttach.setFitHeight(43);
-//                Label label=new Label(files.get(i).getPath());
-//                label.setStyle(String.valueOf(Color.GRAY));
                 showFiles.getChildren().add(imgAttach);
             }
         }
@@ -232,7 +230,6 @@ public class sendMessageController {
         }
         catch (MessagingException e){
             showAlertWarning(e);
-//            System.out.println(e);
         }
 
     }
