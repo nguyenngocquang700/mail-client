@@ -182,13 +182,8 @@ public class sendMessageController {
         try {
             getInformation();
             Session session=createSession();
-            // Create a default MimeMessage object.
             Message message = new MimeMessage(session);
-
-            // Set From: header field of the header.
             message.setFrom(new InternetAddress(MailConfig.APP_EMAIL));
-
-            // Set To: header field of the header.
             message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(addressReceiver));
             message.setRecipients(Message.RecipientType.BCC,InternetAddress.parse(addressBCC));
             message.setRecipients(Message.RecipientType.CC,InternetAddress.parse(addressCC));
@@ -207,7 +202,6 @@ public class sendMessageController {
             // Set text message part
             multipart.addBodyPart(messageBodyPart);
 
-            // Part two is attachment
             if(files!=null){
                 for(int i=0;i<files.size();i++){
                     messageBodyPart = new MimeBodyPart();
