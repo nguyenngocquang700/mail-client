@@ -21,6 +21,7 @@ public class messageListViewCell extends ListCell<FormatMessage> {
     private Label contentMailLb;
 
     private FXMLLoader mLLoader;
+
     @Override
     protected void updateItem(FormatMessage FormatMessage, boolean empty){
         super.updateItem(FormatMessage, empty);
@@ -40,6 +41,8 @@ public class messageListViewCell extends ListCell<FormatMessage> {
             }
             fromLb.setText(String.valueOf(FormatMessage.getFrom()));
             subjectLb.setText(String.valueOf(FormatMessage.getSubject()));
+            dateLb.setText(String.valueOf(FormatMessage.getDateCreated().toString()));
+//            contentMailLb.setText(String.valueOf(FormatMessage.getContentMail()));
             setText(null);
             setGraphic(gridPane);
         }
