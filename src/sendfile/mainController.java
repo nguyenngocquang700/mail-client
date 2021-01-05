@@ -56,6 +56,8 @@ public class mainController implements Initializable {
 
 //    private boolean textIsHtml = false;
 
+//    private boolean textIsHtml = false;
+
     public GridPane showMessageRecv;
     public Label subjectMessageRecv;
     @FXML
@@ -87,7 +89,7 @@ public class mainController implements Initializable {
         folder.open(Folder.READ_ONLY);
         return session;
     }
-
+    
     public void setInboxMessageListView() throws NoSuchProviderException {
         try {
             Properties props = new Properties();

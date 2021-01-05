@@ -194,23 +194,7 @@
                            </children>
                         </HBox>
                         <JFXListView fx:id="listMessageViewParent" prefHeight="744.0" prefWidth="622.0" GridPane.rowIndex="1" />
-                        <AnchorPane fx:id="showCompose" prefHeight="714.0" prefWidth="620.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <GridPane fx:id="showMessageRecv" layoutY="126.0" prefHeight="92.0" prefWidth="728.0" style="-fx-background-color: #f0634f;">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="517.5849766471541" minWidth="10.0" prefWidth="517.5849766471541" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="357.282944176451" minWidth="10.0" prefWidth="211.47163436199787" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <Label fx:id="subjectMessageRecv" prefHeight="18.0" prefWidth="338.0" />
-                                 </children>
-                              </GridPane>
-                           </children></AnchorPane>
+                        <AnchorPane fx:id="showCompose" prefHeight="714.0" prefWidth="620.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>
