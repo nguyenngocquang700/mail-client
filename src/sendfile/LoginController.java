@@ -84,6 +84,7 @@ public class LoginController {
                     Scene scene = new Scene(main);
                     Stage mainStage = (Stage)((Node) Event.getSource()).getScene().getWindow();
                     mainStage.setScene(scene);
+                    mainStage.setTitle("JavaMail");
                     mainStage.show();
                 } catch (IOException e) {
                     e.printStackTrace();

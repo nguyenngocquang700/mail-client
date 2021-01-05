@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
 <AnchorPane prefHeight="850.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sendfile.mainController">
    <children>
@@ -26,17 +27,17 @@
                <children>
                   <Label layoutX="28.0" layoutY="1.0" prefHeight="35.0" prefWidth="359.0" text="Mail Client" textFill="WHITE">
                      <font>
-                        <Font name="Rockwell" size="24.0" />
+                        <Font name="Montserrat ExtraBold" size="24.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="30.0" fitWidth="32.0" layoutX="1247.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="30.0" fitWidth="32.0" layoutX="1195.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@img/user.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="username" alignment="CENTER_RIGHT" layoutX="1276.0" layoutY="5.0" prefHeight="27.0" prefWidth="211.0" text="Anonymous" textFill="WHITE">
+                  <Label fx:id="username" alignment="CENTER_RIGHT" layoutX="1237.0" layoutY="5.0" prefHeight="27.0" prefWidth="250.0" text="Anonymous" textFill="WHITE">
                      <font>
-                        <Font name="System Bold" size="15.0" />
+                        <Font name="Montserrat SemiBold" size="15.0" />
                      </font>
                   </Label>
                </children>
@@ -51,7 +52,7 @@
                            <children>
                               <Button fx:id="composeButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#showComposeScreen" prefHeight="68.0" prefWidth="200.0" style="-fx-background-color: #f0634f; -fx-background-radius: 0; -fx-cursor: hand;" text="Compose" textFill="WHITE">
                                  <font>
-                                    <Font name="Roboto Medium" size="18.0" />
+                                    <Font name="Montserrat SemiBold" size="18.0" />
                                  </font>
                                  <opaqueInsets>
                                     <Insets />
@@ -72,7 +73,7 @@
                               </Button>
                               <Button fx:id="btn_INBOX" mnemonicParsing="false" onAction="#showInbox" prefHeight="41.0" prefWidth="197.0" style="-fx-background-color: #232744; -fx-cursor: hand;" text="  Inbox" textFill="WHITE">
                                  <font>
-                                    <Font name="Roboto Medium" size="18.0" />
+                                    <Font name="Montserrat Medium" size="18.0" />
                                  </font>
                                  <opaqueInsets>
                                     <Insets left="30.0" />
@@ -90,7 +91,7 @@
                               </Button>
                               <Button fx:id="btn_SENT" mnemonicParsing="false" onAction="#showSendMessage" prefHeight="41.0" prefWidth="197.0" style="-fx-background-color: #232744; -fx-cursor: hand;" text="  Sent" textFill="WHITE">
                                  <font>
-                                    <Font name="Roboto Medium" size="18.0" />
+                                    <Font name="Montserrat Medium" size="18.0" />
                                  </font>
                                  <opaqueInsets>
                                     <Insets left="30.0" />
@@ -108,7 +109,7 @@
                               </Button>
                               <Button fx:id="btn_DRAFTS" mnemonicParsing="false" onAction="#showDrafMessage" prefHeight="41.0" prefWidth="197.0" style="-fx-background-color: #232744; -fx-cursor: hand;" text="  Drafts" textFill="WHITE">
                                  <font>
-                                    <Font name="Roboto Medium" size="18.0" />
+                                    <Font name="Montserrat Medium" size="18.0" />
                                  </font>
                                  <opaqueInsets>
                                     <Insets left="30.0" />
@@ -156,6 +157,15 @@
                                  </image>
                               </ImageView>
                            </graphic></Button>
+                        <Button fx:id="logout" layoutX="4.0" layoutY="693.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="51.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                           <graphic>
+                              <ImageView fitHeight="41.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@img/logout.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                      </children>
                   </Pane>
                </children>
@@ -180,7 +190,7 @@
                                  <left>
                                     <Label fx:id="folderLabel" prefHeight="58.0" prefWidth="247.0" text="Gmail" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
-                                          <Font name="Roboto Medium" size="24.0" />
+                                          <Font name="Montserrat Medium" size="24.0" />
                                        </font>
                                        <BorderPane.margin>
                                           <Insets />
@@ -193,8 +203,15 @@
                               </BorderPane>
                            </children>
                         </HBox>
-                        <JFXListView fx:id="listMessageViewParent" prefHeight="744.0" prefWidth="622.0" GridPane.rowIndex="1" />
-                        <StackPane fx:id="showComponent" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <JFXListView fx:id="listMessageViewParent" prefHeight="769.0" prefWidth="541.0" GridPane.rowIndex="1" />
+                        <StackPane fx:id="showComponent" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <WebView fx:id="messageDisplay" prefHeight="774.0" prefWidth="716.0" />
+                                 </children>
+                              </VBox>
+                           </children></StackPane>
                         <GridPane GridPane.columnIndex="1">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="473.0" minWidth="10.0" prefWidth="473.0" />
@@ -205,9 +222,23 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label fx:id="subjectMessageRecv" prefHeight="36.0" prefWidth="358.0" text="Label" />
-                              <Label fx:id="fromMessageRecv" prefHeight="35.0" prefWidth="358.0" text="Label" GridPane.rowIndex="1" />
-                              <Label fx:id="dateMessageRecv" prefHeight="38.0" prefWidth="243.0" text="Label" GridPane.columnIndex="1" />
+                              <Label fx:id="fromMessageRecv" prefHeight="35.0" prefWidth="472.0" textFill="#838383" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="Montserrat Medium" size="12.0" />
+                                 </font></Label>
+                              <Label fx:id="dateMessageRecv" prefHeight="38.0" prefWidth="243.0" textFill="#8a8a8a" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="Montserrat Medium" size="12.0" />
+                                 </font></Label>
+                              <Label fx:id="subjectMessageRecv" prefHeight="36.0" prefWidth="472.0">
+                                 <font>
+                                    <Font name="Montserrat Medium" size="24.0" />
+                                 </font></Label>
+                              <Label fx:id="subjectMessageRecv1" layoutX="10.0" layoutY="10.0" prefHeight="36.0" prefWidth="472.0">
+                                 <font>
+                                    <Font name="Montserrat Medium" size="21.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>

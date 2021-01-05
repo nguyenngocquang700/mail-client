@@ -41,7 +41,7 @@ public class sendMessageController {
     public TextField ccText;
     public TextField bccText;
     public TextField subjectText;
-    public TextField messageText;
+    public TextArea messageText;
 
     public Button sendButton;
     //    public List<ImageView> imgAttach;

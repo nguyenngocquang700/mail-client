@@ -9,24 +9,35 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.web.PopupFeatures;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 import javax.mail.*;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Stack;
+import java.util.logging.ErrorManager;
 
 
 public class mainController implements Initializable {
@@ -37,7 +48,6 @@ public class mainController implements Initializable {
     private ListView<FormatMessage> listMessageViewParent;
     @FXML
     public Button composeButton;
-
     public Button btn_INBOX;
     public Button btn_SENT;
     public Button btn_DRAFTS;
@@ -46,11 +56,14 @@ public class mainController implements Initializable {
     public Label fromMessageRecv;
     public Label dateMessageRecv;
     public StackPane showComponent;
+    public WebView messageDisplay;
+    public WebEngine messageEngine;
     public VBox slider;
     public Label hamburger;
     public Label hamburger1;
     public StackPane progress;
     public Label username;
+    public Button logout;
     public Button info;
 
     @FXML
@@ -92,7 +105,44 @@ public class mainController implements Initializable {
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
             subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
+            fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
+            dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
+            messageEngine = messageDisplay.getEngine();
+            messageEngine.setJavaScriptEnabled(true);
+            messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
+            messageDisplay.getEngine().setCreatePopupHandler(
+                    new Callback<PopupFeatures, WebEngine>() {
+                        @Override
+                        public WebEngine call(PopupFeatures config) {
+                            // grab the last hyperlink that has :hover pseudoclass
+                            Object o = messageDisplay
+                                    .getEngine()
+                                    .executeScript(
+                                            "var list = document.querySelectorAll( ':hover' );"
+                                                    + "for (i=list.length-1; i>-1; i--) "
+                                                    + "{ if ( list.item(i).getAttribute('href') ) "
+                                                    + "{ list.item(i).getAttribute('href'); break; } }");
 
+                            // open in native browser
+                            ErrorManager log = new ErrorManager();
+                            try {
+                                if (o != null) {
+                                    Desktop.getDesktop().browse(
+                                            new URI(o.toString()));
+                                } else {
+                                    System.out.println("No result from uri detector ");
+                                }
+                            } catch (IOException e) {
+                                System.out.println("Unexpected error obtaining uri ");
+                            } catch (URISyntaxException e) {
+                                System.out.println("Could not interpret uri ");
+                            }
+
+                            // prevent from opening in webView
+                            return null;
+                        }
+                    });
+//            messageEngine.load("https://google.com");
 //            showCompose.getChildren().add(showMessageRecv);
         });
 
@@ -111,8 +161,7 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (int i = 0; i < messages.length; ++i) {
-                Message msg = messages[i];
+            for (Message msg : messages) {
                 String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
                     from = msg.getReplyTo()[0].toString();
@@ -121,13 +170,29 @@ public class mainController implements Initializable {
                 }
                 String subject = msg.getSubject();
                 String date = msg.getReceivedDate().toString();
-                messageObservableList.add(new FormatMessage(from, subject, date));
+                String contentType = msg.getContentType();
+                String messageContent = "";
+                if (contentType.contains("multipart")) {
+                    Multipart multipart = (Multipart) msg.getContent();
+                    int numberOfParts = multipart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+                        messageContent = part.getContent().toString();
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
+                    Object content = msg.getContent();
+                    if (content != null) {
+                        messageContent = content.toString();
+                    }
+                }
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
             }
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
     }
+
     public void setSentMessagesListView() throws NoSuchProviderException {
         try {
             Properties props = new Properties();
@@ -148,9 +213,24 @@ public class mainController implements Initializable {
                 }
                 String subject = msg.getSubject();
                 String date = msg.getSentDate().toString();
-                messageObservableList.add(new FormatMessage(from, subject, date));
+                String contentType = msg.getContentType();
+                String messageContent = "";
+                if (contentType.contains("multipart")){
+                    Multipart multipart = (Multipart) msg.getContent();
+                    int numberOfParts = multipart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++){
+                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+                        messageContent = part.getContent().toString();
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")){
+                    Object content = msg.getContent();
+                    if (content != null){
+                        messageContent = content.toString();
+                    }
+                }
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
             }
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -175,12 +255,28 @@ public class mainController implements Initializable {
                 }
                 String subject = msg.getSubject();
                 String date = msg.getSentDate().toString();
-                messageObservableList.add(new FormatMessage(from, subject, date));
+                String contentType = msg.getContentType();
+                String messageContent = "";
+                if (contentType.contains("multipart")){
+                    Multipart multipart = (Multipart) msg.getContent();
+                    int numberOfParts = multipart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++){
+                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+                        messageContent = part.getContent().toString();
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")){
+                    Object content = msg.getContent();
+                    if (content != null){
+                        messageContent = content.toString();
+                    }
+                }
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
             }
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
     }
+
     public void showInbox() throws NoSuchProviderException {
         setInboxMessageListView();
         folderLabel.setText("INBOX");
@@ -208,17 +304,19 @@ public class mainController implements Initializable {
         initActions();
 
     }
+
     public void showComposeScreen() throws IOException {
         FXMLLoader fXMLLoader;
         Parent root = FXMLLoader.load(this.getClass().getResource("sendMessage.fxml"));
         showComponent.getChildren().add(root);
     }
 
-    public void showMessageScreen() throws IOException {
-        FXMLLoader fxmlLoader;
-        Parent root = FXMLLoader.load(this.getClass().getResource("showMessage.fxml"));
-        showComponent.getChildren().add(root);
-    }
+//    public void showMessageScreen() throws IOException {
+//        FXMLLoader fxmlLoader;
+//        Parent root = FXMLLoader.load(this.getClass().getResource("showMessage.fxml"));
+//        showComponent.getChildren().add(root);
+//        initActions();
+//    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -248,6 +346,18 @@ public class mainController implements Initializable {
                 hamburger.setVisible(true);
                 hamburger1.setVisible(false);
             });
+        });
+
+        logout.setOnAction((ActionEvent e)-> {
+            try {
+                Parent main = (Parent) FXMLLoader.load(getClass().getResource("Login.fxml"));
+                Scene scene = new Scene(main);
+                Stage mainStage = (Stage)((Node) e.getSource()).getScene().getWindow();
+                mainStage.setScene(scene);
+                mainStage.show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         info.setOnAction((ActionEvent e)-> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
