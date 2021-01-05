@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 
 public class mainController implements Initializable {
@@ -40,7 +41,11 @@ public class mainController implements Initializable {
     public Button btn_INBOX;
     public Button btn_SENT;
     public Button btn_DRAFTS;
-    public AnchorPane showCompose;
+//    public AnchorPane showCompose;
+    public Label subjectMessageRecv;
+    public Label fromMessageRecv;
+    public Label dateMessageRecv;
+    public StackPane showComponent;
     public VBox slider;
     public Label hamburger;
     public Label hamburger1;
@@ -58,11 +63,23 @@ public class mainController implements Initializable {
 
 //    private boolean textIsHtml = false;
 
-    public GridPane showMessageRecv;
-    public Label subjectMessageRecv;
+
     @FXML
     public Label folderLabel;
+
+    Session createSession(String folderName) throws MessagingException {
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+
+        Session session = Session.getDefaultInstance(props, null);
+        store = session.getStore("imaps");
+        folder = store.getFolder(folderName);
+        folder.open(Folder.READ_ONLY);
+        return session;
+    }
+
     public void initActions(){
+
         //Detecting mouse clicked
         listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
@@ -78,18 +95,9 @@ public class mainController implements Initializable {
 //            showCompose.getChildren().add(showMessageRecv);
         });
 
-    }
-    Session createSession(String folderName) throws MessagingException {
-        Properties props = new Properties();
-        props.setProperty("mail.store.protocol", "imaps");
 
-        Session session = Session.getDefaultInstance(props, null);
-        store = session.getStore("imaps");
-        folder = store.getFolder(folderName);
-        folder.open(Folder.READ_ONLY);
-        return session;
     }
-    
+
     public void setInboxMessageListView() throws NoSuchProviderException {
         try {
             Properties props = new Properties();
@@ -111,7 +119,7 @@ public class mainController implements Initializable {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
-                Date date = msg.getReceivedDate();
+                String date = msg.getReceivedDate().toString();
                 messageObservableList.add(new FormatMessage(from, subject, date));
             }
 
@@ -138,7 +146,7 @@ public class mainController implements Initializable {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
-                Date date = msg.getSentDate();
+                String date = msg.getSentDate().toString();
                 messageObservableList.add(new FormatMessage(from, subject, date));
             }
         } catch (MessagingException e) {
@@ -165,7 +173,7 @@ public class mainController implements Initializable {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
-                Date date = msg.getSentDate();
+                String date = msg.getSentDate().toString();
                 messageObservableList.add(new FormatMessage(from, subject, date));
             }
         } catch (MessagingException e) {
@@ -202,7 +210,13 @@ public class mainController implements Initializable {
     public void showComposeScreen() throws IOException {
         FXMLLoader fXMLLoader;
         Parent root = FXMLLoader.load(this.getClass().getResource("sendMessage.fxml"));
-        showCompose.getChildren().add(root);
+        showComponent.getChildren().add(root);
+    }
+
+    public void showMessageScreen() throws IOException {
+        FXMLLoader fxmlLoader;
+        Parent root = FXMLLoader.load(this.getClass().getResource("showMessage.fxml"));
+        showComponent.getChildren().add(root);
     }
 
     @Override

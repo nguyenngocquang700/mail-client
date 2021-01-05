@@ -8,10 +8,10 @@ public class FormatMessage {
     private String from;
 //    private String fromEmailId;
     private String subject;
-    private Date dateCreated;
+    private String dateCreated;
     private char contentMail;
 
-    public FormatMessage(String from, String subject, Date dateCreated) {
+    public FormatMessage(String from, String subject, String dateCreated) {
         this.from = from;
         this.subject = subject;
 //        this.contentMail =  contentMail;
@@ -45,7 +45,7 @@ public class FormatMessage {
 //        return bodyText;
 //    }
 
-    public Date getDateCreated(){ return dateCreated; }
+    public String getDateCreated(){ return (String)dateCreated; }
 
     public void setFrom(String to){
         this.from = from;
@@ -58,5 +58,5 @@ public class FormatMessage {
 //    public void setContentMail(char contentMail) { this.contentMail = contentMail; }
 
 
-    public void setDateCreated(Date dateCreated) { this.dateCreated = dateCreated; }
+    public void setDateCreated(String dateCreated) { this.dateCreated = dateCreated; }
 }
