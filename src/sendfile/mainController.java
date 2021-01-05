@@ -92,6 +92,7 @@ public class mainController implements Initializable {
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
             subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
+
 //            showCompose.getChildren().add(showMessageRecv);
         });
 
