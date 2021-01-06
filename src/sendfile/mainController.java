@@ -51,7 +51,7 @@ public class mainController implements Initializable {
     public Button btn_INBOX;
     public Button btn_SENT;
     public Button btn_DRAFTS;
-//    public AnchorPane showCompose;
+    //    public AnchorPane showCompose;
     public Label subjectMessageRecv;
     public Label fromMessageRecv;
     public Label dateMessageRecv;
@@ -97,10 +97,6 @@ public class mainController implements Initializable {
         listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent arg0) {
-                //Check wich list index is selected then set txtContent value for that index
-//                if (listMessageViewParent.getSelectionModel().getSelectedIndex() == 0) {
-//                    System.out.println("");
-//                }
             }
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
@@ -142,6 +138,8 @@ public class mainController implements Initializable {
                             return null;
                         }
                     });
+            showComponent.getChildren().clear();
+            showComponent.getChildren().add(messageDisplay);
         });
 
 
@@ -288,6 +286,7 @@ public class mainController implements Initializable {
         setSentMessagesListView();
         folderLabel.setText("SENT MAILS");
         btn_SENT.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
+        btn_INBOX.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions();
@@ -296,6 +295,7 @@ public class mainController implements Initializable {
         setDraftMessagesListView();
         folderLabel.setText("DRAFT MAILS");
         btn_DRAFTS.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
+        btn_INBOX.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions();
