@@ -112,7 +112,7 @@ public class sendMessageController {
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.port", MailConfig.SSL_PORT);
 
-        Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             }
