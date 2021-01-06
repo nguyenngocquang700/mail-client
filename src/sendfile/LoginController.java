@@ -1,5 +1,6 @@
 package sendfile;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -14,10 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -28,7 +26,7 @@ public class LoginController {
     @FXML
     public TextField user;
     public PasswordField pass;
-    public Button Login;
+    public JFXButton Login;
     public Button exit;
     public ImageView imgLoader;
 
@@ -43,14 +41,9 @@ public class LoginController {
             Session session = Session.getInstance(props);
             Store store = session.getStore("imap");
             store.connect(host, user, password);
-            if (store.isConnected()) return true;
+            return store.isConnected();
 //            else return false;
 //            store.close();
-
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

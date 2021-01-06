@@ -203,7 +203,7 @@
                               </BorderPane>
                            </children>
                         </HBox>
-                        <JFXListView fx:id="listMessageViewParent" prefHeight="769.0" prefWidth="541.0" GridPane.rowIndex="1" />
+                        <JFXListView fx:id="listMessageViewParent" prefHeight="769.0" prefWidth="541.0" style="-fx-background-color: #3f425b;" GridPane.rowIndex="1" />
                         <StackPane fx:id="showComponent" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <VBox prefHeight="200.0" prefWidth="100.0">

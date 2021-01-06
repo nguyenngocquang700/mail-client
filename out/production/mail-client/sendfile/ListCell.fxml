@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="507.0" style="-fx-background-color: #E6E6E6;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="507.0" style="-fx-background-color: #1a1d30; -fx-background-radius: 15;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="340.0" minWidth="10.0" prefWidth="320.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="214.0" minWidth="10.0" prefWidth="162.0" />
@@ -17,21 +17,21 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label fx:id="fromLb" prefHeight="42.0" prefWidth="330.0">
+      <Label fx:id="fromLb" prefHeight="42.0" prefWidth="330.0" textFill="WHITE">
          <font>
             <Font name="Montserrat SemiBold" size="18.0" />
          </font>
          <GridPane.margin>
             <Insets left="5.0" />
          </GridPane.margin></Label>
-      <Label fx:id="subjectLb" prefHeight="40.0" prefWidth="340.0" textFill="#575757" GridPane.rowIndex="1">
+      <Label fx:id="subjectLb" prefHeight="40.0" prefWidth="340.0" textFill="#c3c3c3" GridPane.rowIndex="1">
          <font>
             <Font name="Montserrat Medium" size="15.0" />
          </font>
          <GridPane.margin>
             <Insets left="5.0" />
          </GridPane.margin></Label>
-      <Label fx:id="dateLb" prefHeight="40.0" prefWidth="177.0" textFill="#6b6b6b" GridPane.columnIndex="1">
+      <Label fx:id="dateLb" prefHeight="40.0" prefWidth="177.0" textFill="#c3c3c3" GridPane.columnIndex="1">
          <font>
             <Font name="Montserrat Medium" size="15.0" />
          </font>
