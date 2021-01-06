@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -37,26 +37,26 @@
                   <Font name="Montserrat Medium" size="14.0" />
                </font>
             </Label>
-            <Button fx:id="Login" layoutX="116.0" layoutY="443.0" mnemonicParsing="false" onAction="#Login" prefHeight="51.0" prefWidth="119.0" style="-fx-background-color: #f0634f;" text="Login" textFill="WHITE">
-               <font>
-                  <Font name="Montserrat Medium" size="24.0" />
-               </font>
-            </Button>
             <PasswordField fx:id="pass" layoutX="53.0" layoutY="369.0" prefHeight="39.0" prefWidth="384.0" style="-fx-background-color: #3f425b; -fx-text-inner-color: #ffffff;">
                <font>
                   <Font size="14.0" />
                </font>
             </PasswordField>
-            <Button fx:id="exit" layoutX="269.0" layoutY="443.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="119.0" style="-fx-background-color: #f0634f;" text="Exit" textFill="WHITE">
-               <font>
-                  <Font name="Montserrat Medium" size="24.0" />
-               </font>
-            </Button>
             <Label layoutX="54.0" layoutY="114.0" opacity="0.68" text="Hello there! Login and start managing your Gmail account" textFill="WHITE">
                <font>
                   <Font name="Montserrat Medium" size="14.0" />
                </font>
             </Label>
+            <JFXButton fx:id="Login" layoutX="94.0" layoutY="446.0" onAction="#Login" prefHeight="45.0" prefWidth="126.0" style="-fx-background-color: #f0634f;" text="Login" textFill="WHITE">
+               <font>
+                  <Font name="Montserrat Medium" size="24.0" />
+               </font>
+            </JFXButton>
+            <JFXButton fx:id="exit" layoutX="267.0" layoutY="446.0" prefHeight="45.0" prefWidth="126.0" style="-fx-background-color: #f0634f;" text="Exit" textFill="WHITE">
+               <font>
+                  <Font name="Montserrat Medium" size="24.0" />
+               </font>
+            </JFXButton>
          </children></AnchorPane>
       <Label layoutX="94.0" layoutY="163.0" prefHeight="294.0" prefWidth="484.0" text="Mail Client using JavaMail API" textAlignment="CENTER" textFill="WHITE" wrapText="true">
          <font>

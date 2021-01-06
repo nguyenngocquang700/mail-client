@@ -142,8 +142,6 @@ public class mainController implements Initializable {
                             return null;
                         }
                     });
-//            messageEngine.load("https://google.com");
-//            showCompose.getChildren().add(showMessageRecv);
         });
 
 
@@ -156,7 +154,7 @@ public class mainController implements Initializable {
 
             Session session = Session.getDefaultInstance(props, null);
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
+            store.connect(MailConfig.hostRec_IMAP, MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
@@ -199,7 +197,7 @@ public class mainController implements Initializable {
             props.setProperty("mail.store.protocol", "imaps");
             Session session = Session.getDefaultInstance(props, null);
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
+            store.connect(MailConfig.hostRec_IMAP, MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             folder = store.getFolder("[Gmail]/Sent Mail");
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
@@ -241,7 +239,7 @@ public class mainController implements Initializable {
 
             Session session = Session.getDefaultInstance(props, null);
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
+            store.connect(MailConfig.hostRec_IMAP, MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             folder = store.getFolder("[Gmail]/Drafts");
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
@@ -293,7 +291,6 @@ public class mainController implements Initializable {
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions();
-
     }
     public void showDrafMessage() throws NoSuchProviderException {
         setDraftMessagesListView();
@@ -308,6 +305,7 @@ public class mainController implements Initializable {
     public void showComposeScreen() throws IOException {
         FXMLLoader fXMLLoader;
         Parent root = FXMLLoader.load(this.getClass().getResource("sendMessage.fxml"));
+        showComponent.getChildren().clear();
         showComponent.getChildren().add(root);
     }
 

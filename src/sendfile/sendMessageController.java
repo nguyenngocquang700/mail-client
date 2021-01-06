@@ -50,6 +50,8 @@ public class sendMessageController {
     public String addressBCC;
     public String messageInfomation;
     public String subjectInformation;
+    public String Username_ss = MailConfig.APP_EMAIL;
+    public String Password_ss = MailConfig.APP_PASSWORD;
     public List<File> files;
     public HBox showFiles;
     public MenuButton format;
@@ -114,7 +116,7 @@ public class sendMessageController {
 
         Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
+                return new PasswordAuthentication(Username_ss, Password_ss);
             }
         });
         return session;
@@ -181,7 +183,7 @@ public class sendMessageController {
     public void sendMessage() {
         try {
             getInformation();
-            Session session=createSession();
+            Session session = createSession();
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(MailConfig.APP_EMAIL));
             message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(addressReceiver));
