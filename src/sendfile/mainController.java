@@ -29,14 +29,11 @@ import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Date;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.ErrorManager;
 
 
@@ -49,8 +46,9 @@ public class mainController implements Initializable {
     @FXML
     public Button composeButton;
     public Button btn_INBOX;
-    public Button btn_SENT;
     public Button btn_DRAFTS;
+    public Button attachment;
+    public Button btn_SENT;
     //    public AnchorPane showCompose;
     public Label subjectMessageRecv;
     public Label fromMessageRecv;
@@ -166,6 +164,16 @@ public class mainController implements Initializable {
                         }
                     }
                 });
+                attachment.setDisable(true);
+                if (listMessageViewParent.getSelectionModel().getSelectedItem().getAttachmentboo()) {
+                    attachment.setDisable(false);
+                    attachment.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            downloadAttachment(listMessageViewParent.getSelectionModel().getSelectedItem().getAt());
+                        }
+                    });
+                }
             }
         });
 
@@ -182,6 +190,7 @@ public class mainController implements Initializable {
                 subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
                 fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
                 dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
+                //attachmentRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getAttachment());
                 messageEngine = messageDisplay.getEngine();
                 messageEngine.setJavaScriptEnabled(true);
                 messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
@@ -219,7 +228,7 @@ public class mainController implements Initializable {
                         });
                 showComponent.getChildren().clear();
                 showComponent.getChildren().add(messageDisplay);
-                int index=listMessageViewParent.getSelectionModel().getSelectedIndex();
+                int index=listMessageViewParent.getSelectionModel().getSelectedItem().getAt();
                 deleteMessage.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -328,6 +337,95 @@ public class mainController implements Initializable {
         });
 
     }
+    public static void processMultipart(Multipart mp)
+            throws MessagingException {
+        for (int i = 0; i < mp.getCount(); i++) {
+            processPart(mp.getBodyPart(i));
+        }
+    }
+
+    public static void processPart(Part p) {
+        try {
+            String fileName = p.getFileName();
+            String disposition = p.getDisposition();
+            String contentType = p.getContentType();
+            if (contentType.toLowerCase().startsWith("multipart/")) {
+                processMultipart((Multipart) p.getContent());
+            } else if (fileName == null
+                    && (Part.ATTACHMENT.equalsIgnoreCase(disposition)
+                    || !contentType.equalsIgnoreCase("text/plain"))) {
+                // pick a random file name.
+                fileName = File.createTempFile("attachment", ".txt").getName();
+            }
+            if (fileName == null) { // likely inline
+                p.writeTo(System.out);
+            } else {
+                File f = new File(fileName);
+                // find a file that does not yet exist
+                for (int i = 1; f.exists(); i++) {
+                    String newName = fileName + " " + i;
+                    f = new File(newName);
+                }
+                try (
+                        OutputStream out = new BufferedOutputStream(new FileOutputStream(f));
+                        InputStream in = new BufferedInputStream(p.getInputStream())) {
+                    // We can't just use p.writeTo() here because it doesn't
+                    // decode the attachment. Instead we copy the input stream
+                    // onto the output stream which does automatically decode
+                    // Base-64, quoted printable, and a variety of other formats.
+                    int b;
+                    while ((b = in.read()) != -1) out.write(b);
+                    out.flush();
+                }
+            }
+        } catch (IOException | MessagingException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void downloadAttachment(int i) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("mail.store.protocol", "imaps");
+
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore("imaps");
+            store.connect("imap.gmail.com","testmailnhom31@gmail.com", "sicnjfvnxczuncdn");
+            Folder folder = store.getFolder("INBOX");
+            if (folder == null) {
+                System.out.println("Folder  not found.");
+                System.exit(1);
+            }
+            folder.open(Folder.READ_ONLY);
+            // Get the messages from the server
+            Message[] messages = folder.getMessages();
+            System.out.println("------------ Message " + (i + 1)
+                    + " ------------");
+            // Print message headers
+            @SuppressWarnings("unchecked")
+            Enumeration<Header> headers = messages[i].getAllHeaders();
+            while (headers.hasMoreElements()) {
+                Header h = headers.nextElement();
+                //  System.out.println(h.getName() + ": " + h.getValue());
+            }
+            System.out.println();
+            // Enumerate parts
+            Object body = messages[i].getContent();
+            if (body instanceof Multipart) {
+                processMultipart((Multipart) body);
+            } else { // ordinary message
+                processPart(messages[i]);
+            }
+            System.out.println();
+            // Close the connection
+            // but don't remove the messages from the server
+            folder.close(false);
+        } catch (MessagingException | IOException ex) {
+            ex.printStackTrace();
+        }
+        // Since we may have brought up a GUI to authenticate,
+        // we can't rely on returning from main() to exit
+    }
     public void deteleMessageView_inbox(int index) throws MessagingException {
         try {
             Properties props = new Properties();
@@ -414,7 +512,8 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (Message msg : messages) {
+            for (int i= messages.length -1 ; i>=0 ;i--) {
+                Message msg = messages[i];
                 String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
                     from = msg.getReplyTo()[0].toString();
@@ -425,12 +524,26 @@ public class mainController implements Initializable {
                 String date = msg.getReceivedDate().toString();
                 String contentType = msg.getContentType();
                 String messageContent = "";
+                String attachFiles = "";
+                boolean attachboo=false;
                 if (contentType.contains("multipart")) {
-                    Multipart multipart = (Multipart) msg.getContent();
-                    int numberOfParts = multipart.getCount();
+                    Multipart multiPart = (Multipart) msg.getContent();
+                    int numberOfParts = multiPart.getCount();
                     for (int partCount = 0; partCount < numberOfParts; partCount++) {
-                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                        messageContent = part.getContent().toString();
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            attachboo = true;
+                            InputStream is = part.getInputStream();
+                            String fileName = part.getFileName();
+                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            //System.out.println(fileName);
+                            attachFiles += fileName + ", ";
+                        } else {
+                            messageContent = part.getContent().toString();
+                        }
+                    }
+                    if (attachFiles.length() > 1) {
+                        attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
                     }
                 } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
                     Object content = msg.getContent();
@@ -438,7 +551,8 @@ public class mainController implements Initializable {
                         messageContent = content.toString();
                     }
                 }
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
+           //     System.out.println(messageContent);
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -480,7 +594,7 @@ public class mainController implements Initializable {
                         messageContent = content.toString();
                     }
                 }
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,"", 0,false));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -522,7 +636,7 @@ public class mainController implements Initializable {
                         messageContent = content.toString();
                     }
                 }
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date));
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,"",0,false));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();

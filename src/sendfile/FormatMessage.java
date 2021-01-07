@@ -10,15 +10,21 @@ public class FormatMessage {
     private String subject;
     private String dateCreated;
     private String bodyText = null;
+    private boolean attachmentboo;
     private char contentMail;
-
-    public FormatMessage(String from, String subject, String bodyText, String dateCreated) {
+    private String attachment;
+    private int at;
+    public FormatMessage(String from, String subject, String bodyText, String dateCreated, String attachment, int at,boolean attachmentboo) {
         this.from = from;
         this.subject = subject;
 //        this.contentMail =  contentMail;
         this.dateCreated = dateCreated;
         this.bodyText = bodyText;
+        this.attachment = attachment;
+        this.at = at;
+        this.attachmentboo = attachmentboo;
     }
+
 //    private String bodyText = null;
 
 //    public String getTo(){
@@ -28,7 +34,9 @@ public class FormatMessage {
 //    public String getToEmailId(){
 //        return toEmailId;
 //    }
-
+    public boolean getAttachmentboo() { return attachmentboo;}
+    public String getAttachment() { return attachment;}
+    public int getAt() { return at;}
     public String getFrom(){
         return from;
     }
