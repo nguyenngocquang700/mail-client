@@ -41,50 +41,50 @@ public class LoginController {
             Session session = Session.getInstance(props);
             Store store = session.getStore("imap");
             store.connect(host, user, password);
-            return store.isConnected();
-//            else return false;
-//            store.close();
+            if(store.isConnected()==true){
+                return true;
+            }
+            else{
+                return false;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
     @FXML
     public void Login() throws IOException {
-        username = user.getText();
-        if (username.isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Form Error!", "Please enter your Gmail account");
-            return;
-        }
-        password = pass.getText();
-        if (password.isEmpty()){
-            showAlert(Alert.AlertType.ERROR, "Form Error!", "Please enter your password account");
-            return;
-        }
-        boolean flag = check(username,password);
+
+
         Login.setOnAction(Event -> {
-            if (!flag){
-//                infoBox("Please enter correct Email and Password", null, "Failed");
-                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please enter correct Email and Password");
-            }
-            else {
-//            FXMLLoader fXMLLoader;
-//            Parent root = FXMLLoader.load(this.getClass().getResource("Main.fxml"));
-                try {
+            username=user.getText();
+            password=pass.getText();
+            if(!username.isEmpty()&&!password.isEmpty()){
+                if(check(username,password)==true){
+                    try {
 //                    Image i = new Image(new File("sendfile/img/Spinner-1s-200px.gif").toURI().toString());
 //                    imgLoader.setImage(i);
-                    Parent main = (Parent) FXMLLoader.load(getClass().getResource("Main.fxml"));
-                    Scene scene = new Scene(main);
-                    Stage mainStage = (Stage)((Node) Event.getSource()).getScene().getWindow();
-                    mainStage.setScene(scene);
-                    mainStage.setTitle("JavaMail");
-                    mainStage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                        user.clear();
+                        pass.clear();
+                        Parent main = (Parent) FXMLLoader.load(getClass().getResource("Main.fxml"));
+                        Scene scene = new Scene(main);
+                        Stage mainStage = (Stage)((Node) Event.getSource()).getScene().getWindow();
+                        mainStage.setScene(scene);
+                        mainStage.setTitle("JavaMail");
+                        mainStage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+                else{
+                    showAlert(Alert.AlertType.ERROR, "Form Error!", "Please Email and Password INCORRECT");
+                }
+
             }
-            username = null;
-            password = null;
+            else {
+
+                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please Email and Password IS NULL");
+            }
+
         });
         exit.setOnAction(actionEvent -> Platform.exit());
     }
