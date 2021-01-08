@@ -78,6 +78,7 @@ public class mainController implements Initializable {
     @FXML
     public Label folderLabel;
 
+    private boolean textIsHtml = false;
     Session createSession(String folderName) throws MessagingException {
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -358,7 +359,7 @@ public class mainController implements Initializable {
                 fileName = File.createTempFile("attachment", ".txt").getName();
             }
             if (fileName == null) { // likely inline
-                p.writeTo(System.out);
+//                p.writeTo(System.out);
             } else {
                 File f = new File(fileName);
                 // find a file that does not yet exist
@@ -374,7 +375,7 @@ public class mainController implements Initializable {
                     // onto the output stream which does automatically decode
                     // Base-64, quoted printable, and a variety of other formats.
                     int b;
-                    while ((b = in.read()) != -1) out.write(b);
+                    while ((b = in.read()) != -1) {out.write(b); }
                     out.flush();
                 }
             }
@@ -390,7 +391,7 @@ public class mainController implements Initializable {
 
             Session session = Session.getInstance(props, null);
             Store store = session.getStore("imaps");
-            store.connect("imap.gmail.com","testmailnhom31@gmail.com", "sicnjfvnxczuncdn");
+            store.connect("imap.gmail.com",MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             Folder folder = store.getFolder("INBOX");
             if (folder == null) {
                 System.out.println("Folder  not found.");
@@ -501,6 +502,45 @@ public class mainController implements Initializable {
             e.printStackTrace();
         }
     }
+    private String getTextMess(Part p) throws
+            MessagingException, IOException {
+        if (p.isMimeType("text/*")) {
+            String s = (String)p.getContent();
+            textIsHtml = p.isMimeType("text/html");
+            return s;
+        }
+
+        if (p.isMimeType("multipart/alternative")) {
+            // prefer html text over plain text
+            Multipart mp = (Multipart)p.getContent();
+            String text = null;
+            for (int i = 0; i < mp.getCount(); i++) {
+                Part bp = mp.getBodyPart(i);
+                if (bp.isMimeType("text/plain")) {
+                    if (text == null)
+                        text = getTextMess(bp);
+                    continue;
+                } else if (bp.isMimeType("text/html")) {
+                    String s = getTextMess(bp);
+                    if (s != null)
+                        return s;
+                } else {
+                    return getTextMess(bp);
+                }
+            }
+            return text;
+        } else if (p.isMimeType("multipart/*")) {
+            Multipart mp = (Multipart)p.getContent();
+            for (int i = 0; i < mp.getCount(); i++) {
+                String s = getTextMess(mp.getBodyPart(i));
+                if (s != null)
+                    return s;
+            }
+        }
+
+        return null;
+    }
+
     public void setInboxMessageListView() throws NoSuchProviderException {
         try {
             Properties props = new Properties();
@@ -539,11 +579,13 @@ public class mainController implements Initializable {
                             //System.out.println(fileName);
                             attachFiles += fileName + ", ";
                         } else {
-                            messageContent = part.getContent().toString();
+//                            messageContent = part.getContent().toString();
+                            messageContent = getTextMess(msg);
                         }
                     }
                     if (attachFiles.length() > 1) {
                         attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
+//                        messageContent = getTextMess(msg);
                     }
                 } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
                     Object content = msg.getContent();
@@ -551,7 +593,8 @@ public class mainController implements Initializable {
                         messageContent = content.toString();
                     }
                 }
-           //     System.out.println(messageContent);
+
+                System.out.println(attachFiles);
                 messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
             }
         } catch (MessagingException | IOException e) {
@@ -570,31 +613,50 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (Message msg : messages) {
-                String from = "Unknown";
+            for (int i= messages.length -1 ; i>=0 ;i--) {
+                Message msg = messages[i];
+                String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
                     from = msg.getReplyTo()[0].toString();
                 } else if (msg.getFrom().length >= 1) {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
-                String date = msg.getSentDate().toString();
+                String date = msg.getReceivedDate().toString();
                 String contentType = msg.getContentType();
                 String messageContent = "";
-                if (contentType.contains("multipart")){
-                    Multipart multipart = (Multipart) msg.getContent();
-                    int numberOfParts = multipart.getCount();
-                    for (int partCount = 0; partCount < numberOfParts; partCount++){
-                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                        messageContent = part.getContent().toString();
+                String attachFiles = "";
+                boolean attachboo=false;
+                if (contentType.contains("multipart")) {
+                    Multipart multiPart = (Multipart) msg.getContent();
+                    int numberOfParts = multiPart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            attachboo = true;
+                            InputStream is = part.getInputStream();
+                            String fileName = part.getFileName();
+                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            //System.out.println(fileName);
+                            attachFiles += fileName + ", ";
+                        } else {
+//                            messageContent = part.getContent().toString();
+                            messageContent = getTextMess(msg);
+                        }
                     }
-                } else if (contentType.contains("text/plain") || contentType.contains("text/html")){
+                    if (attachFiles.length() > 1) {
+                        attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
+//                        messageContent = getTextMess(msg);
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
                     Object content = msg.getContent();
-                    if (content != null){
+                    if (content != null) {
                         messageContent = content.toString();
                     }
                 }
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,"", 0,false));
+
+                //     System.out.println(messageContent);
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -612,31 +674,49 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (Message msg : messages) {
-                String from = "Unknown";
+            for (int i= messages.length -1 ; i>=0 ;i--) {
+                Message msg = messages[i];
+                String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
                     from = msg.getReplyTo()[0].toString();
                 } else if (msg.getFrom().length >= 1) {
                     from = msg.getFrom()[0].toString();
                 }
                 String subject = msg.getSubject();
-                String date = msg.getSentDate().toString();
+                String date = msg.getReceivedDate().toString();
                 String contentType = msg.getContentType();
                 String messageContent = "";
-                if (contentType.contains("multipart")){
-                    Multipart multipart = (Multipart) msg.getContent();
-                    int numberOfParts = multipart.getCount();
-                    for (int partCount = 0; partCount < numberOfParts; partCount++){
-                        MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                        messageContent = part.getContent().toString();
+                String attachFiles = "";
+                boolean attachboo=false;
+                if (contentType.contains("multipart")) {
+                    Multipart multiPart = (Multipart) msg.getContent();
+                    int numberOfParts = multiPart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            attachboo = true;
+                            InputStream is = part.getInputStream();
+                            String fileName = part.getFileName();
+                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            //System.out.println(fileName);
+                            attachFiles += fileName + ", ";
+                        } else {
+//                            messageContent = part.getContent().toString();
+                            messageContent = getTextMess(msg);
+                        }
                     }
-                } else if (contentType.contains("text/plain") || contentType.contains("text/html")){
+                    if (attachFiles.length() > 1) {
+                        attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
                     Object content = msg.getContent();
-                    if (content != null){
+                    if (content != null) {
                         messageContent = content.toString();
                     }
                 }
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,"",0,false));
+
+                //     System.out.println(messageContent);
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
