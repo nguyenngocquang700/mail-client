@@ -1,5 +1,6 @@
 package sendfile;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -44,11 +45,11 @@ public class mainController implements Initializable {
     @FXML
     private ListView<FormatMessage> listMessageViewParent;
     @FXML
-    public Button composeButton;
-    public Button btn_INBOX;
-    public Button btn_DRAFTS;
-    public Button attachment;
-    public Button btn_SENT;
+    public JFXButton composeButton;
+    public JFXButton btn_INBOX;
+    public JFXButton btn_DRAFTS;
+    public JFXButton attachment;
+    public JFXButton btn_SENT;
     //    public AnchorPane showCompose;
     public Label subjectMessageRecv;
     public Label fromMessageRecv;
@@ -63,7 +64,7 @@ public class mainController implements Initializable {
     public Label username;
     public Button logout;
     public Button info;
-    public Button deleteMessage;
+    public JFXButton deleteMessage;
     @FXML
     public ImageView hamg;
     public Pane slidePane;
@@ -726,7 +727,6 @@ public class mainController implements Initializable {
     public void showInbox() throws NoSuchProviderException {
         setInboxMessageListView();
         folderLabel.setText("INBOX");
-        btn_INBOX.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions_inbox();
@@ -734,8 +734,6 @@ public class mainController implements Initializable {
     public void showSendMessage() throws NoSuchProviderException {
         setSentMessagesListView();
         folderLabel.setText("SENT MAILS");
-        btn_SENT.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
-        btn_INBOX.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions_sent();
@@ -744,8 +742,6 @@ public class mainController implements Initializable {
     public void showDrafMessage() throws NoSuchProviderException {
         setDraftMessagesListView();
         folderLabel.setText("DRAFT MAILS");
-        btn_DRAFTS.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
-        btn_INBOX.setStyle("-fx-text-fill: #f0634f; -fx-background-color:  #232744;");
         listMessageViewParent.setItems(messageObservableList);
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions_draft();
