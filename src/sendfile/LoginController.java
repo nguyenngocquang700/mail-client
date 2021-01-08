@@ -2,6 +2,8 @@ package sendfile;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -76,17 +78,19 @@ public class LoginController {
                     }
                 }
                 else{
-                    showAlert(Alert.AlertType.ERROR, "Form Error!", "Please Email and Password INCORRECT");
+                    showAlert(Alert.AlertType.ERROR, "Form Error!", "Please enter Email and Password CORRECT");
                 }
 
             }
             else {
 
-                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please Email and Password IS NULL");
+                showAlert(Alert.AlertType.ERROR, "Form Error!", "Email and Password IS NULL");
             }
 
         });
-        exit.setOnAction(actionEvent -> Platform.exit());
+        exit.setOnAction((ActionEvent event) -> {
+            System.exit(0);
+        });
     }
 
     public static void infoBox(String infoMessage, String headerText, String title) {
