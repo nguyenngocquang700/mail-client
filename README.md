@@ -20,10 +20,12 @@ Sinh viên lớp **D18CQAT01-N Học viện Công nghệ Bưu chính - Viễn th
 * Nhiều tính năng bổ sung trong bản cập nhật kế tiếp
 ## JavaMail API
 * Để tìm hiểu thêm về JavaMail API, bạn có thể tham khảo trên [tutorialspoint](https://www.tutorialspoint.com/javamail_api/)  
+## Result
+![Result](https://github.com/nguyenngocquang700/mail-client/blob/master/ScreenshotResult.png?raw=true)
 ## Lưu ý
 * Khi bạn sử dụng Project này, vui lòng tôn trọng quyền tác giả:
-
 * Không copy, chỉnh sửa source
 * Project chỉ mang tính tham khảo
+
 
 Copyright © 2021
