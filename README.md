@@ -9,6 +9,8 @@ Sinh viên lớp **D18CQAT01-N Học viện Công nghệ Bưu chính - Viễn th
 ## Hướng dẫn cài đặt  
 
 * Để thực thi được chương trình bạn cần import tất cả thư viện trong thư mục `lib` vào project
+* Tiếp đó bạn cần thêm VM options vào project bằng command sau: ```--module-path [path lib JavaFX] --add-modules=javafx.swing,javafx.graphics,javafx.fxml,javafx.media,javafx.web --add-reads javafx.graphics=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.charts=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED --add-opens javafx.graphics/com.sun.javafx.css=ALL-UNNAMED --add-opens javafx.base/com.sun.javafx.runtime=ALL-UNNAMED ```  
+> **Hướng dẫn chi tiết tại** https://www.jetbrains.com/help/idea/javafx.html#vm-options
 * Để sử dụng và đăng nhập được vào hệ thống bạn cần tạo tài khoản Gmail và sử dụng `Gmail App Password` cung cấp bởi google
 > **Hướng dẫn tạo mật khẩu ứng dụng:** https://support.google.com/accounts/answer/185833
 
