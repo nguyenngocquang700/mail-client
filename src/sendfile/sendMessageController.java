@@ -52,7 +52,8 @@ public class sendMessageController {
     public String subjectInformation;
     public String Username_ss = MailConfig.APP_EMAIL;
     public String Password_ss = MailConfig.APP_PASSWORD;
-    public List<File> files;
+    public List<File> files=new ArrayList<>();
+
     public HBox showFiles;
     public MenuButton format;
     private Desktop desktop = Desktop.getDesktop();
@@ -129,11 +130,11 @@ public class sendMessageController {
         FileChooser.ExtensionFilter imageFilter=new FileChooser.ExtensionFilter("Image","*.jpg","*png");
         fc.getExtensionFilters().add(imageFilter);
         fc.setTitle("Choose a Image");
-
-        files =fc.showOpenMultipleDialog(stage);
-
+//        files=fc.showOpenMultipleDialog(stage);
+        files.addAll(fc.showOpenMultipleDialog(stage));
         if(files!=null){
             for(int i=0;i<files.size();i++) {
+//                System.out.println("file: "+files.get(i).getName());
                 Image image = new Image(files.get(i).toURI().toString());
                 ImageView imgAttach=new ImageView();
                 imgAttach.setImage(image);
@@ -147,16 +148,13 @@ public class sendMessageController {
     public void chooseFile(){
         Stage stage=(Stage)anchorPaneStage.getScene().getWindow();
         FileChooser fc=new FileChooser();
-
         FileChooser.ExtensionFilter fileFilter=new FileChooser.ExtensionFilter("File","*.txt","*.docx","*.pdf");
         fc.getExtensionFilters().add(fileFilter);
         fc.setTitle("Choose a File");
-
-        files =fc.showOpenMultipleDialog(stage);
-
+        files.addAll(fc.showOpenMultipleDialog(stage));
         if(files!=null){
             for(int i=0;i<files.size();i++) {
-                Label label=new Label(files.get(i).getPath());
+                Label label=new Label(files.get(i).getName());
                 label.setStyle(String.valueOf(Color.GRAY));
                 label.setTextFill(Color.BLACK);
                 showFiles.getChildren().add(label);
@@ -192,35 +190,34 @@ public class sendMessageController {
             // Set Subject: header field
             message.setSubject(subjectInformation);
 
-            // Create the message part
-            BodyPart messageBodyPart = new MimeBodyPart();
+            if(files==null&& files.size()==0) {
+                message.setText(messageInfomation);
+            }else{
 
-            // Now set the actual message
-            messageBodyPart.setText(messageInfomation);
-
-            // Create a multipar message
-            Multipart multipart = new MimeMultipart();
-
-            // Set text message part
-            multipart.addBodyPart(messageBodyPart);
-
-            if(files!=null){
-                for(int i=0;i<files.size();i++){
-                    messageBodyPart = new MimeBodyPart();
-                    String filename = files.get(i).getPath().toString();
-                    DataSource source = new FileDataSource(filename);
+//                    System.out.println("file: "+files.get(i).getName());
+                Multipart multipart = new MimeMultipart();
+                MimeBodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setText(messageInfomation);
+                multipart.addBodyPart(messageBodyPart);
+//                    String filename = files.get(i).getPath().toString();
+                for(File file: files){
+                    messageBodyPart=new MimeBodyPart();
+                    DataSource source = new FileDataSource(file);
                     messageBodyPart.setDataHandler(new DataHandler(source));
-                    messageBodyPart.setFileName(filename);
+                    messageBodyPart.setFileName(file.getName());
                     multipart.addBodyPart(messageBodyPart);
                 }
+                message.setContent(multipart);
             }
 
-            // Send the complete message parts
-            message.setContent(multipart);
+            message.saveChanges();
 
-            // Send message
-
-            Transport.send(message);
+            try{
+                Transport.send(message,message.getAllRecipients());
+            }
+            catch (Exception e){
+                System.out.println(e);
+            }
             showAlertConfirm();
 
         }

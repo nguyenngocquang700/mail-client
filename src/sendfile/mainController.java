@@ -80,6 +80,7 @@ public class mainController implements Initializable {
     public Label folderLabel;
 
     private boolean textIsHtml = false;
+
     Session createSession(String folderName) throws MessagingException {
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -91,75 +92,76 @@ public class mainController implements Initializable {
         return session;
     }
 
-    public void initActions_inbox(){
+    public void initActions_inbox() {
         //Detecting mouse clicked
-        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
             }
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
-            if(!listMessageViewParent.getItems().isEmpty()){
-                subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
-                fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
-                dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
-                messageEngine = messageDisplay.getEngine();
-                messageEngine.setJavaScriptEnabled(true);
-                messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
-                messageDisplay.getEngine().setCreatePopupHandler(
-                        new Callback<PopupFeatures, WebEngine>() {
-                            @Override
-                            public WebEngine call(PopupFeatures config) {
-                                // grab the last hyperlink that has :hover pseudoclass
-                                Object o = messageDisplay
-                                        .getEngine()
-                                        .executeScript(
-                                                "var list = document.querySelectorAll( ':hover' );"
-                                                        + "for (i=list.length-1; i>-1; i--) "
-                                                        + "{ if ( list.item(i).getAttribute('href') ) "
-                                                        + "{ list.item(i).getAttribute('href'); break; } }");
+            if (!listMessageViewParent.getItems().isEmpty()) {
+                if (listMessageViewParent.getSelectionModel().getSelectedItem() != null) {
+                    subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
+                    fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
+                    dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
+                    messageEngine = messageDisplay.getEngine();
+                    messageEngine.setJavaScriptEnabled(true);
+                    messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
+                    messageDisplay.getEngine().setCreatePopupHandler(
+                            new Callback<PopupFeatures, WebEngine>() {
+                                @Override
+                                public WebEngine call(PopupFeatures config) {
+                                    // grab the last hyperlink that has :hover pseudoclass
+                                    Object o = messageDisplay
+                                            .getEngine()
+                                            .executeScript(
+                                                    "var list = document.querySelectorAll( ':hover' );"
+                                                            + "for (i=list.length-1; i>-1; i--) "
+                                                            + "{ if ( list.item(i).getAttribute('href') ) "
+                                                            + "{ list.item(i).getAttribute('href'); break; } }");
 
-                                // open in native browser
-                                ErrorManager log = new ErrorManager();
-                                try {
-                                    if (o != null) {
-                                        Desktop.getDesktop().browse(
-                                                new URI(o.toString()));
-                                    } else {
-                                        System.out.println("No result from uri detector ");
+                                    // open in native browser
+                                    ErrorManager log = new ErrorManager();
+                                    try {
+                                        if (o != null) {
+                                            Desktop.getDesktop().browse(
+                                                    new URI(o.toString()));
+                                        } else {
+                                            System.out.println("No result from uri detector ");
+                                        }
+                                    } catch (IOException e) {
+                                        System.out.println("Unexpected error obtaining uri ");
+                                    } catch (URISyntaxException e) {
+                                        System.out.println("Could not interpret uri ");
                                     }
-                                } catch (IOException e) {
-                                    System.out.println("Unexpected error obtaining uri ");
-                                } catch (URISyntaxException e) {
-                                    System.out.println("Could not interpret uri ");
-                                }
 
-                                // prevent from opening in webView
-                                return null;
-                            }
-                        });
+                                    // prevent from opening in webView
+                                    return null;
+                                }
+                            });
+                }
                 showComponent.getChildren().clear();
                 showComponent.getChildren().add(messageDisplay);
-                int index=listMessageViewParent.getSelectionModel().getSelectedIndex();
+                int index = listMessageViewParent.getSelectionModel().getSelectedIndex();
                 deleteMessage.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         try {
-                            if(listMessageViewParent.getSelectionModel().getSelectedIndex()==(listMessageViewParent.getItems().size()-1)||listMessageViewParent.getSelectionModel().getSelectedIndex()==0){
+                            if (listMessageViewParent.getSelectionModel().getSelectedIndex() == (listMessageViewParent.getItems().size() - 1) || listMessageViewParent.getSelectionModel().getSelectedIndex() == 0) {
                                 fromMessageRecv.setText("");
                                 subjectMessageRecv.setText("");
                                 dateMessageRecv.setText("");
                                 messageObservableList.remove(index);
                                 deteleMessageView_inbox(index);
                                 messageEngine.loadContent("");
-                            }
-                            else{
+                            } else {
                                 fromMessageRecv.setText(listMessageViewParent.getItems().get(index).getFrom());
                                 subjectMessageRecv.setText(listMessageViewParent.getItems().get(index).getSubject());
                                 dateMessageRecv.setText(listMessageViewParent.getItems().get(index).getDateCreated());
                                 messageObservableList.remove(index);
                                 deteleMessageView_inbox(index);
-                                messageEngine.loadContent(listMessageViewParent.getItems().get(index-1).getBodyText());
+                                messageEngine.loadContent(listMessageViewParent.getItems().get(index - 1).getBodyText());
                             }
                         } catch (MessagingException e) {
                             e.printStackTrace();
@@ -167,89 +169,93 @@ public class mainController implements Initializable {
                     }
                 });
                 attachment.setDisable(true);
-                if (listMessageViewParent.getSelectionModel().getSelectedItem().getAttachmentboo()) {
-                    attachment.setDisable(false);
-                    attachment.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            downloadAttachment(listMessageViewParent.getSelectionModel().getSelectedItem().getAt());
-                        }
-                    });
+                if (listMessageViewParent.getSelectionModel().getSelectedItem() != null) {
+                    if (listMessageViewParent.getSelectionModel().getSelectedItem().getAttachmentboo()) {
+                        attachment.setDisable(false);
+                        attachment.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                downloadAttachment(listMessageViewParent.getSelectionModel().getSelectedItem().getAt());
+                            }
+                        });
+                    }
                 }
             }
         });
 
     }
-    public void initActions_draft(){
+
+    public void initActions_draft() {
         //Detecting mouse clicked
-        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
             }
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
-            if(!listMessageViewParent.getItems().isEmpty()){
-                subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
-                fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
-                dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
-                //attachmentRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getAttachment());
-                messageEngine = messageDisplay.getEngine();
-                messageEngine.setJavaScriptEnabled(true);
-                messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
-                messageDisplay.getEngine().setCreatePopupHandler(
-                        new Callback<PopupFeatures, WebEngine>() {
-                            @Override
-                            public WebEngine call(PopupFeatures config) {
-                                // grab the last hyperlink that has :hover pseudoclass
-                                Object o = messageDisplay
-                                        .getEngine()
-                                        .executeScript(
-                                                "var list = document.querySelectorAll( ':hover' );"
-                                                        + "for (i=list.length-1; i>-1; i--) "
-                                                        + "{ if ( list.item(i).getAttribute('href') ) "
-                                                        + "{ list.item(i).getAttribute('href'); break; } }");
+            if (!listMessageViewParent.getItems().isEmpty()) {
+                if (listMessageViewParent.getSelectionModel().getSelectedItem() != null) {
+                    subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
+                    fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
+                    dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
+                    //attachmentRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getAttachment());
+                    messageEngine = messageDisplay.getEngine();
+                    messageEngine.setJavaScriptEnabled(true);
+                    messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
+                    messageDisplay.getEngine().setCreatePopupHandler(
+                            new Callback<PopupFeatures, WebEngine>() {
+                                @Override
+                                public WebEngine call(PopupFeatures config) {
+                                    // grab the last hyperlink that has :hover pseudoclass
+                                    Object o = messageDisplay
+                                            .getEngine()
+                                            .executeScript(
+                                                    "var list = document.querySelectorAll( ':hover' );"
+                                                            + "for (i=list.length-1; i>-1; i--) "
+                                                            + "{ if ( list.item(i).getAttribute('href') ) "
+                                                            + "{ list.item(i).getAttribute('href'); break; } }");
 
-                                // open in native browser
-                                ErrorManager log = new ErrorManager();
-                                try {
-                                    if (o != null) {
-                                        Desktop.getDesktop().browse(
-                                                new URI(o.toString()));
-                                    } else {
-                                        System.out.println("No result from uri detector ");
+                                    // open in native browser
+                                    ErrorManager log = new ErrorManager();
+                                    try {
+                                        if (o != null) {
+                                            Desktop.getDesktop().browse(
+                                                    new URI(o.toString()));
+                                        } else {
+                                            System.out.println("No result from uri detector ");
+                                        }
+                                    } catch (IOException e) {
+                                        System.out.println("Unexpected error obtaining uri ");
+                                    } catch (URISyntaxException e) {
+                                        System.out.println("Could not interpret uri ");
                                     }
-                                } catch (IOException e) {
-                                    System.out.println("Unexpected error obtaining uri ");
-                                } catch (URISyntaxException e) {
-                                    System.out.println("Could not interpret uri ");
-                                }
 
-                                // prevent from opening in webView
-                                return null;
-                            }
-                        });
+                                    // prevent from opening in webView
+                                    return null;
+                                }
+                            });
+                }
                 showComponent.getChildren().clear();
                 showComponent.getChildren().add(messageDisplay);
-                int index=listMessageViewParent.getSelectionModel().getSelectedItem().getAt();
+                int index = listMessageViewParent.getSelectionModel().getSelectedItem().getAt();
                 deleteMessage.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         try {
-                            if(listMessageViewParent.getSelectionModel().getSelectedIndex()==(listMessageViewParent.getItems().size()-1)||listMessageViewParent.getSelectionModel().getSelectedIndex()==0){
+                            if (listMessageViewParent.getSelectionModel().getSelectedIndex() == (listMessageViewParent.getItems().size() - 1) || listMessageViewParent.getSelectionModel().getSelectedIndex() == 0) {
                                 fromMessageRecv.setText("");
                                 subjectMessageRecv.setText("");
                                 dateMessageRecv.setText("");
                                 messageObservableList.remove(index);
                                 deteleMessageView_draft(index);
                                 messageEngine.loadContent("");
-                            }
-                            else{
+                            } else {
                                 fromMessageRecv.setText(listMessageViewParent.getItems().get(index).getFrom());
                                 subjectMessageRecv.setText(listMessageViewParent.getItems().get(index).getSubject());
                                 dateMessageRecv.setText(listMessageViewParent.getItems().get(index).getDateCreated());
                                 messageObservableList.remove(index);
                                 deteleMessageView_draft(index);
-                                messageEngine.loadContent(listMessageViewParent.getItems().get(index-1).getBodyText());
+                                messageEngine.loadContent(listMessageViewParent.getItems().get(index - 1).getBodyText());
                             }
                         } catch (MessagingException e) {
                             e.printStackTrace();
@@ -260,75 +266,77 @@ public class mainController implements Initializable {
         });
 
     }
-    public void initActions_sent(){
+
+    public void initActions_sent() {
         //Detecting mouse clicked
-        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        listMessageViewParent.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
             }
         });
         listMessageViewParent.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FormatMessage> ov, FormatMessage old_val, FormatMessage new_val) -> {
-            if(!listMessageViewParent.getItems().isEmpty()){
-                subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
-                fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
-                dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
-                messageEngine = messageDisplay.getEngine();
-                messageEngine.setJavaScriptEnabled(true);
-                messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
-                messageDisplay.getEngine().setCreatePopupHandler(
-                        new Callback<PopupFeatures, WebEngine>() {
-                            @Override
-                            public WebEngine call(PopupFeatures config) {
-                                // grab the last hyperlink that has :hover pseudoclass
-                                Object o = messageDisplay
-                                        .getEngine()
-                                        .executeScript(
-                                                "var list = document.querySelectorAll( ':hover' );"
-                                                        + "for (i=list.length-1; i>-1; i--) "
-                                                        + "{ if ( list.item(i).getAttribute('href') ) "
-                                                        + "{ list.item(i).getAttribute('href'); break; } }");
+            if (!listMessageViewParent.getItems().isEmpty()) {
+                if (listMessageViewParent.getSelectionModel().getSelectedItem() != null) {
+                    subjectMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getSubject());
+                    fromMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getFrom());
+                    dateMessageRecv.setText(listMessageViewParent.getSelectionModel().getSelectedItem().getDateCreated());
+                    messageEngine = messageDisplay.getEngine();
+                    messageEngine.setJavaScriptEnabled(true);
+                    messageEngine.loadContent(listMessageViewParent.getSelectionModel().getSelectedItem().getBodyText());
+                    messageDisplay.getEngine().setCreatePopupHandler(
+                            new Callback<PopupFeatures, WebEngine>() {
+                                @Override
+                                public WebEngine call(PopupFeatures config) {
+                                    // grab the last hyperlink that has :hover pseudoclass
+                                    Object o = messageDisplay
+                                            .getEngine()
+                                            .executeScript(
+                                                    "var list = document.querySelectorAll( ':hover' );"
+                                                            + "for (i=list.length-1; i>-1; i--) "
+                                                            + "{ if ( list.item(i).getAttribute('href') ) "
+                                                            + "{ list.item(i).getAttribute('href'); break; } }");
 
-                                // open in native browser
-                                ErrorManager log = new ErrorManager();
-                                try {
-                                    if (o != null) {
-                                        Desktop.getDesktop().browse(
-                                                new URI(o.toString()));
-                                    } else {
-                                        System.out.println("No result from uri detector ");
+                                    // open in native browser
+                                    ErrorManager log = new ErrorManager();
+                                    try {
+                                        if (o != null) {
+                                            Desktop.getDesktop().browse(
+                                                    new URI(o.toString()));
+                                        } else {
+                                            System.out.println("No result from uri detector ");
+                                        }
+                                    } catch (IOException e) {
+                                        System.out.println("Unexpected error obtaining uri ");
+                                    } catch (URISyntaxException e) {
+                                        System.out.println("Could not interpret uri ");
                                     }
-                                } catch (IOException e) {
-                                    System.out.println("Unexpected error obtaining uri ");
-                                } catch (URISyntaxException e) {
-                                    System.out.println("Could not interpret uri ");
-                                }
 
-                                // prevent from opening in webView
-                                return null;
-                            }
-                        });
+                                    // prevent from opening in webView
+                                    return null;
+                                }
+                            });
+                }
                 showComponent.getChildren().clear();
                 showComponent.getChildren().add(messageDisplay);
-                int index=listMessageViewParent.getSelectionModel().getSelectedIndex();
+                int index = listMessageViewParent.getSelectionModel().getSelectedIndex();
                 deleteMessage.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         try {
-                            if(listMessageViewParent.getSelectionModel().getSelectedIndex()==(listMessageViewParent.getItems().size()-1)||listMessageViewParent.getSelectionModel().getSelectedIndex()==0){
+                            if (listMessageViewParent.getSelectionModel().getSelectedIndex() == (listMessageViewParent.getItems().size() - 1) || listMessageViewParent.getSelectionModel().getSelectedIndex() == 0) {
                                 fromMessageRecv.setText("");
                                 subjectMessageRecv.setText("");
                                 dateMessageRecv.setText("");
                                 messageObservableList.remove(index);
                                 deteleMessageView_sent(index);
                                 messageEngine.loadContent("");
-                            }
-                            else{
+                            } else {
                                 fromMessageRecv.setText(listMessageViewParent.getItems().get(index).getFrom());
                                 subjectMessageRecv.setText(listMessageViewParent.getItems().get(index).getSubject());
                                 dateMessageRecv.setText(listMessageViewParent.getItems().get(index).getDateCreated());
                                 messageObservableList.remove(index);
                                 deteleMessageView_sent(index);
-                                messageEngine.loadContent(listMessageViewParent.getItems().get(index-1).getBodyText());
+                                messageEngine.loadContent(listMessageViewParent.getItems().get(index - 1).getBodyText());
                             }
                         } catch (MessagingException e) {
                             e.printStackTrace();
@@ -339,6 +347,7 @@ public class mainController implements Initializable {
         });
 
     }
+
     public static void processMultipart(Multipart mp)
             throws MessagingException {
         for (int i = 0; i < mp.getCount(); i++) {
@@ -376,7 +385,9 @@ public class mainController implements Initializable {
                     // onto the output stream which does automatically decode
                     // Base-64, quoted printable, and a variety of other formats.
                     int b;
-                    while ((b = in.read()) != -1) {out.write(b); }
+                    while ((b = in.read()) != -1) {
+                        out.write(b);
+                    }
                     out.flush();
                 }
             }
@@ -392,7 +403,7 @@ public class mainController implements Initializable {
 
             Session session = Session.getInstance(props, null);
             Store store = session.getStore("imaps");
-            store.connect("imap.gmail.com",MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
+            store.connect("imap.gmail.com", MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
             Folder folder = store.getFolder("INBOX");
             if (folder == null) {
                 System.out.println("Folder  not found.");
@@ -428,6 +439,7 @@ public class mainController implements Initializable {
         // Since we may have brought up a GUI to authenticate,
         // we can't rely on returning from main() to exit
     }
+
     public void deteleMessageView_inbox(int index) throws MessagingException {
         try {
             Properties props = new Properties();
@@ -453,6 +465,7 @@ public class mainController implements Initializable {
             e.printStackTrace();
         }
     }
+
     public void deteleMessageView_draft(int index) throws MessagingException {
         try {
             Properties props = new Properties();
@@ -478,6 +491,7 @@ public class mainController implements Initializable {
             e.printStackTrace();
         }
     }
+
     public void deteleMessageView_sent(int index) throws MessagingException {
         try {
             Properties props = new Properties();
@@ -503,17 +517,18 @@ public class mainController implements Initializable {
             e.printStackTrace();
         }
     }
+
     private String getTextMess(Part p) throws
             MessagingException, IOException {
         if (p.isMimeType("text/*")) {
-            String s = (String)p.getContent();
+            String s = (String) p.getContent();
             textIsHtml = p.isMimeType("text/html");
             return s;
         }
 
         if (p.isMimeType("multipart/alternative")) {
             // prefer html text over plain text
-            Multipart mp = (Multipart)p.getContent();
+            Multipart mp = (Multipart) p.getContent();
             String text = null;
             for (int i = 0; i < mp.getCount(); i++) {
                 Part bp = mp.getBodyPart(i);
@@ -531,7 +546,7 @@ public class mainController implements Initializable {
             }
             return text;
         } else if (p.isMimeType("multipart/*")) {
-            Multipart mp = (Multipart)p.getContent();
+            Multipart mp = (Multipart) p.getContent();
             for (int i = 0; i < mp.getCount(); i++) {
                 String s = getTextMess(mp.getBodyPart(i));
                 if (s != null)
@@ -553,7 +568,7 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (int i= messages.length -1 ; i>=0 ;i--) {
+            for (int i = messages.length - 1; i >= 0; i--) {
                 Message msg = messages[i];
                 String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
@@ -566,7 +581,7 @@ public class mainController implements Initializable {
                 String contentType = msg.getContentType();
                 String messageContent = "";
                 String attachFiles = "";
-                boolean attachboo=false;
+                boolean attachboo = false;
                 if (contentType.contains("multipart")) {
                     Multipart multiPart = (Multipart) msg.getContent();
                     int numberOfParts = multiPart.getCount();
@@ -576,7 +591,7 @@ public class mainController implements Initializable {
                             attachboo = true;
                             InputStream is = part.getInputStream();
                             String fileName = part.getFileName();
-                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            fileName.substring(fileName.lastIndexOf("/") + 1);
                             //System.out.println(fileName);
                             attachFiles += fileName + ", ";
                         } else {
@@ -596,7 +611,7 @@ public class mainController implements Initializable {
                 }
 
                 System.out.println(attachFiles);
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date, attachFiles, i, attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -614,7 +629,7 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (int i= messages.length -1 ; i>=0 ;i--) {
+            for (int i = messages.length - 1; i >= 0; i--) {
                 Message msg = messages[i];
                 String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
@@ -627,7 +642,7 @@ public class mainController implements Initializable {
                 String contentType = msg.getContentType();
                 String messageContent = "";
                 String attachFiles = "";
-                boolean attachboo=false;
+                boolean attachboo = false;
                 if (contentType.contains("multipart")) {
                     Multipart multiPart = (Multipart) msg.getContent();
                     int numberOfParts = multiPart.getCount();
@@ -637,7 +652,7 @@ public class mainController implements Initializable {
                             attachboo = true;
                             InputStream is = part.getInputStream();
                             String fileName = part.getFileName();
-                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            fileName.substring(fileName.lastIndexOf("/") + 1);
                             //System.out.println(fileName);
                             attachFiles += fileName + ", ";
                         } else {
@@ -657,13 +672,14 @@ public class mainController implements Initializable {
                 }
 
                 //     System.out.println(messageContent);
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date, attachFiles, i, attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
     }
-    public void setDraftMessagesListView() throws NoSuchProviderException{
+
+    public void setDraftMessagesListView() throws NoSuchProviderException {
         try {
             Properties props = new Properties();
             props.setProperty("mail.store.protocol", "imaps");
@@ -675,7 +691,7 @@ public class mainController implements Initializable {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.getMessages();
             messageObservableList = FXCollections.observableArrayList();
-            for (int i= messages.length -1 ; i>=0 ;i--) {
+            for (int i = messages.length - 1; i >= 0; i--) {
                 Message msg = messages[i];
                 String from = "Unknow";
                 if (msg.getReplyTo().length >= 1) {
@@ -688,7 +704,7 @@ public class mainController implements Initializable {
                 String contentType = msg.getContentType();
                 String messageContent = "";
                 String attachFiles = "";
-                boolean attachboo=false;
+                boolean attachboo = false;
                 if (contentType.contains("multipart")) {
                     Multipart multiPart = (Multipart) msg.getContent();
                     int numberOfParts = multiPart.getCount();
@@ -698,7 +714,7 @@ public class mainController implements Initializable {
                             attachboo = true;
                             InputStream is = part.getInputStream();
                             String fileName = part.getFileName();
-                            fileName.substring(fileName.lastIndexOf("/")+1);
+                            fileName.substring(fileName.lastIndexOf("/") + 1);
                             //System.out.println(fileName);
                             attachFiles += fileName + ", ";
                         } else {
@@ -717,7 +733,7 @@ public class mainController implements Initializable {
                 }
 
                 //     System.out.println(messageContent);
-                messageObservableList.add(new FormatMessage(from, subject, messageContent, date,attachFiles,i,attachboo));
+                messageObservableList.add(new FormatMessage(from, subject, messageContent, date, attachFiles, i, attachboo));
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -731,6 +747,7 @@ public class mainController implements Initializable {
         listMessageViewParent.setCellFactory(listMessageView -> new messageListViewCell());
         initActions_inbox();
     }
+
     public void showSendMessage() throws NoSuchProviderException {
         setSentMessagesListView();
         folderLabel.setText("SENT MAILS");
@@ -739,6 +756,7 @@ public class mainController implements Initializable {
         initActions_sent();
 
     }
+
     public void showDrafMessage() throws NoSuchProviderException {
         setDraftMessagesListView();
         folderLabel.setText("DRAFT MAILS");
@@ -765,7 +783,7 @@ public class mainController implements Initializable {
             slide.setToX(0);
             slide.play();
             slider.setTranslateX(-197);
-            slide.setOnFinished((ActionEvent e)-> {
+            slide.setOnFinished((ActionEvent e) -> {
                 hamburger.setVisible(false);
                 hamburger1.setVisible(true);
 
@@ -778,34 +796,34 @@ public class mainController implements Initializable {
             slide.setToX(-197);
             slide.play();
             slider.setTranslateX(0);
-            slide.setOnFinished((ActionEvent e)-> {
+            slide.setOnFinished((ActionEvent e) -> {
                 hamburger.setVisible(true);
                 hamburger1.setVisible(false);
             });
         });
 
-        logout.setOnAction((ActionEvent e)-> {
+        logout.setOnAction((ActionEvent e) -> {
             try {
                 Parent main = (Parent) FXMLLoader.load(getClass().getResource("Login.fxml"));
                 Scene scene = new Scene(main);
-                Stage mainStage = (Stage)((Node) e.getSource()).getScene().getWindow();
+                Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
                 mainStage.setScene(scene);
                 mainStage.show();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         });
-        info.setOnAction((ActionEvent e)-> {
+        info.setOnAction((ActionEvent e) -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About");
             alert.setHeaderText(null);
-            alert.setContentText("""
-                Mail client with JavaMail API
-                Developed by: Nguyen Ngoc Quang 
-                              Tran Thi Thanh Tam 
-                              Le Thi My Phung 
-                              Huynh My Dung
-                Copyright © 2021 Alright Reserved""");
+//            alert.setContentText("""
+//                Mail client with JavaMail API
+//                Developed by: Nguyen Ngoc Quang
+//                              Tran Thi Thanh Tam
+//                              Le Thi My Phung
+//                              Huynh My Dung
+//                Copyright © 2021 Alright Reserved""");
             alert.showAndWait();
         });
     }
