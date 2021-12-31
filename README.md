@@ -1,5 +1,5 @@
 # Mail client using JavaMail API
-##### Phiên bản hiện tại: v1.2 (2021.1.8)
+##### Phiên bản hiện tại: v1.2 (2021.12.31)
 ## Tổng quan
 **Đề tài môn:** Lập trình hướng đối tượng bằng ngôn ngữ Java  
 **Giảng viên hướng dẫn:** Trần Minh Thái  
